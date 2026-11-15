@@ -1,0 +1,6 @@
+{
+  "name": "DTHP · Barrière Intestinale",
+  "description": "Plateforme de simulation mécaniste (ODE) de l'impact du butyrate et des métabolites microbiens sur les jonctions serrées, la TEER et la perméabilité cellulaire pour jumeau numérique de santé.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
