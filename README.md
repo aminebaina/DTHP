@@ -1,8 +1,13 @@
 # DTHP · Gut Barrier MCP Server & Deterministic QSP Simulator
 
-Deterministic 4-ODE mechanistic simulator (4th-order Runge-Kutta, internal `Δt = 0.02 h`) quantifying the impact of microbial metabolites (butyrate, propionate, acetate, indole-3-propionate) on intestinal tight junctions (`ZO-1` / `Occludin`), transepithelial electrical resistance (`TEER`), apparent permeability (`P_app` FITC-Dextran 4 kDa), and clinical Lactulose/Mannitol (`L/M`) ratio.
+> [!CAUTION]
+> **RESEARCH USE ONLY — NO MEDICAL ADVICE — NO WARRANTY / USAGE RECHERCHE UNIQUEMENT — PAS D'AVIS MÉDICAL**
+>
+> **EN:** This software and all mathematical models, ODE simulations, parameters, API/MCP outputs, and visualizations are provided **strictly for scientific research, theoretical modeling, and educational purposes**. This project is **NOT a certified medical device** (neither FDA-cleared nor CE-marked under EU MDR) and has **NOT been clinically validated**. Nothing in this repository constitutes medical advice, clinical diagnosis, prognosis, or therapeutic/dosing recommendations. **Never** use this software to make clinical or personal health decisions. By downloading, running, or integrating this code, you agree to the full terms in [`DISCLAIMER.md`](./DISCLAIMER.md) and [`LICENSE`](./LICENSE): the software is provided **"AS IS"**, without warranty of any kind, and the authors disclaim all liability for any direct or indirect damages arising from its use.
+>
+> **FR :** Ce logiciel ainsi que l'ensemble des modèles mathématiques, simulations ODE, paramètres, résultats API/MCP et visualisations sont fournis **exclusivement à des fins de recherche scientifique, de modélisation théorique et d'éducation**. Ce projet n'est **PAS un dispositif médical certifié** (non approuvé FDA ni marqué CE / RDM) et n'est **PAS validé cliniquement**. Aucun résultat ne constitue un avis médical, un diagnostic, ni une recommandation thérapeutique ou posologique. **N'utilisez jamais** cet outil pour prendre des décisions médicales ou de santé. Le logiciel est fourni **« EN L'ÉTAT »**, sans aucune garantie ; voir [`DISCLAIMER.md`](./DISCLAIMER.md) et [`LICENSE`](./LICENSE).
 
-> **Research Use Only:** In silico simulation outputs are for scientific research and educational purposes only. They are not clinically validated and do not constitute medical advice, diagnosis, or treatment recommendations.
+Deterministic 4-ODE mechanistic simulator (4th-order Runge-Kutta, internal `Δt = 0.02 h`) quantifying the impact of microbial metabolites (butyrate, propionate, acetate, indole-3-propionate) on intestinal tight junctions (`ZO-1` / `Occludin`), transepithelial electrical resistance (`TEER`), apparent permeability (`P_app` FITC-Dextran 4 kDa), and clinical Lactulose/Mannitol (`L/M`) ratio.
 
 ## Exposed MCP Tools (`mcp-server.ts` & `POST /mcp`)
 
@@ -37,3 +42,9 @@ npm run dev
 ```bash
 npm test
 ```
+
+## Legal Disclaimer & License
+
+- Full Legal & Medical Disclaimer (EN / FR): [`DISCLAIMER.md`](./DISCLAIMER.md)
+- License & Limitation of Liability: [`LICENSE`](./LICENSE) (MIT License)
+
