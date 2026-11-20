@@ -149,7 +149,11 @@ export default function App() {
   const currentInfStim = result.inputs.inflammation_stimulus[safeIndex];
 
   const baselineTeer = 1000.0 / (config.params.G_cell + config.params.G_TJ_0);
-  const barrierStatus = classifyBarrierState(currentLM, currentV, lang);
+  const barrierStatusInfo = classifyBarrierState(currentLM, currentV);
+  const barrierStatus = {
+    ...barrierStatusInfo,
+    ...t.status[barrierStatusInfo.i18nKey],
+  };
 
   const navItems: { id: ActiveTab; label: string }[] = [
     { id: 'simulateur', label: t.nav.simulateur },

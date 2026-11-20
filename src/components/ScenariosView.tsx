@@ -67,7 +67,11 @@ export const ScenariosView: React.FC<ScenariosViewProps> = ({
           <tbody className="divide-y divide-slate-100">
             {rows.map(({ config, label, description, isCurrent, result }) => {
               const s = result.final_snapshot;
-              const status = classifyBarrierState(s.lactulose_mannitol_ratio, s.cell_viability, lang);
+              const statusInfo = classifyBarrierState(s.lactulose_mannitol_ratio, s.cell_viability);
+              const status = {
+                ...statusInfo,
+                ...TRANSLATIONS[lang].status[statusInfo.i18nKey],
+              };
               const toneClass =
                 status.tone === 'nominal'
                   ? 'text-emerald-700'

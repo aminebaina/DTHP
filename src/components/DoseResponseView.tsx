@@ -68,11 +68,14 @@ export const DoseResponseView: React.FC<DoseResponseViewProps> = ({
 
   const inspectIdx = hoverIdx !== null ? hoverIdx : Math.min(48, Math.round((currentButyrate / maxDose) * 48));
   const inspectedPoint = patientSweep[inspectIdx] || patientSweep[0];
-  const inspectedStatus = classifyBarrierState(
+  const inspectedStatusInfo = classifyBarrierState(
     inspectedPoint.lactulose_mannitol_ratio,
-    inspectedPoint.cell_viability,
-    lang
+    inspectedPoint.cell_viability
   );
+  const inspectedStatus = {
+    ...inspectedStatusInfo,
+    ...TRANSLATIONS[lang].status[inspectedStatusInfo.i18nKey],
+  };
 
   const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

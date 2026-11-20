@@ -34,7 +34,9 @@ export const EpithelialDiagram: React.FC<EpithelialDiagramProps> = ({
   tjMax,
 }) => {
   const t = TRANSLATIONS[lang].diagram;
-  const status = classifyBarrierState(lmRatio, viability, lang);
+  const statusInfo = classifyBarrierState(lmRatio, viability);
+  const statusText = TRANSLATIONS[lang].status[statusInfo.i18nKey];
+  const status = { ...statusInfo, ...statusText };
   const normalizedTJ = Math.min(1, Math.max(0, tj / tjMax));
   const gapPx = Math.max(4, (1 - normalizedTJ) * 28 + (1 - viability) * 44);
   const cellHeightShrink = (1 - viability) * 42;

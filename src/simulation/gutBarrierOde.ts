@@ -1,5 +1,3 @@
-import { Lang, TRANSLATIONS } from '../i18n';
-
 export interface PatientBarrierParams {
   // Couche de mucus (1.0 = Caco-2 in vitro ; ~0.25 = colon humain in vivo sain)
   mucus_attenuation: number;
@@ -460,54 +458,134 @@ export function computeDoseResponseSweep(
   return points;
 }
 
-export function classifyBarrierState(
-  lmRatio: number,
-  viability: number,
-  lang: Lang = 'fr'
-): {
-  label: string;
+export type BarrierStatusCode =
+  | 'APOPTOTIC_RUPTURE'
+  | 'LEAKY_GUT'
+  | 'ELEVATED_PERMEABILITY'
+  | 'REINFORCED'
+  | 'INTACT';
+
+export type BarrierStatusI18nKey =
+  | 'apoptotic'
+  | 'leakyGut'
+  | 'elevated'
+  | 'reinforced'
+  | 'intact';
+
+export interface BarrierStatusInfo {
+  code: BarrierStatusCode;
   glyph: string;
   tone: 'nominal' | 'warning' | 'critical';
-  detail: string;
-} {
-  const s = TRANSLATIONS[lang].status;
+  i18nKey: BarrierStatusI18nKey;
+}
+
+export function classifyBarrierState(
+  lmRatio: number,
+  viability: number
+): BarrierStatusInfo {
   if (viability < 0.85) {
     return {
-      label: s.apoptotic.label,
+      code: 'APOPTOTIC_RUPTURE',
       glyph: '✖',
       tone: 'critical',
-      detail: s.apoptotic.detail,
+      i18nKey: 'apoptotic',
     };
   }
   if (lmRatio > 0.05) {
     return {
-      label: s.leakyGut.label,
+      code: 'LEAKY_GUT',
       glyph: '✖',
       tone: 'critical',
-      detail: s.leakyGut.detail,
+      i18nKey: 'leakyGut',
     };
   }
   if (lmRatio > 0.032) {
     return {
-      label: s.elevated.label,
+      code: 'ELEVATED_PERMEABILITY',
       glyph: '▲',
       tone: 'warning',
-      detail: s.elevated.detail,
+      i18nKey: 'elevated',
     };
   }
   if (lmRatio < 0.02) {
     return {
-      label: s.reinforced.label,
+      code: 'REINFORCED',
       glyph: '●',
       tone: 'nominal',
-      detail: s.reinforced.detail,
+      i18nKey: 'reinforced',
     };
   }
   return {
-    label: s.intact.label,
+    code: 'INTACT',
     glyph: '●',
     tone: 'nominal',
-    detail: s.intact.detail,
+    i18nKey: 'intact',
+  };
+}
+
+export interface BiomarkerCalibrationInput {
+  fecal_calprotectin_ug_g?: number;
+  baseline_lm_ratio?: number;
+  serum_lbp_ug_ml?: number;
+  mucus_state?: 'in_vitro' | 'healthy_in_vivo' | 'degraded_ibd';
+}
+
+export interface BiomarkerCalibrationOutput {
+  calibrated_params: PatientBarrierParams;
+  estimated_S_inf_h_inv: number;
+  calibration_notes: string[];
+}
+
+export function calibrateFromBiomarkers(
+  input: BiomarkerCalibrationInput
+): BiomarkerCalibrationOutput {
+  const params: PatientBarrierParams = { ...DEFAULT_PATIENT_PARAMS };
+  const notes: string[] = [];
+
+  const mucusState = input.mucus_state ?? 'healthy_in_vivo';
+  if (mucusState === 'in_vitro') {
+    params.mucus_attenuation = 1.0;
+    notes.push('In vitro Caco-2 monolayer: mucus_attenuation = 1.00');
+  } else if (mucusState === 'degraded_ibd') {
+    params.mucus_attenuation = 0.6;
+    notes.push('Degraded mucosal layer (IBD profile): mucus_attenuation = 0.60');
+  } else {
+    params.mucus_attenuation = 0.25;
+    notes.push('Healthy human colonic mucus layer: mucus_attenuation = 0.25');
+  }
+
+  // Calprotectin mapping (normal < 50 ug/g, active flare >= 250 ug/g) -> S_inf in [0, 0.22]
+  const calpro = Math.max(0, input.fecal_calprotectin_ug_g ?? 30);
+  const estimatedSInf =
+    calpro <= 50
+      ? 0.0
+      : Math.min(0.22, Number((((calpro - 50) / 250) * 0.12).toFixed(4)));
+  notes.push(`Fecal calprotectin (${calpro} ug/g) -> S_inf = ${estimatedSInf} h^-1`);
+
+  // Baseline L/M ratio calibration (healthy = 0.025 -> P_pore_0 = 0.60)
+  if (input.baseline_lm_ratio !== undefined) {
+    const clampedLm = Math.max(0.01, Math.min(0.15, input.baseline_lm_ratio));
+    params.LM_ratio_0 = clampedLm;
+    params.P_pore_0 = Number((0.6 * (clampedLm / 0.025)).toFixed(4));
+    notes.push(
+      `Baseline L/M (${clampedLm}) -> P_pore_0 = ${params.P_pore_0} x10^-6 cm/s`
+    );
+  }
+
+  // Serum LBP / LPS translocation feedback mapping (normal ~5-10 ug/mL, endotoxemia > 15 ug/mL)
+  if (input.serum_lbp_ug_ml !== undefined) {
+    const lbp = Math.max(0, input.serum_lbp_ug_ml);
+    params.k_trans =
+      lbp <= 10
+        ? 0.01
+        : Number(Math.min(0.05, 0.01 + ((lbp - 10) / 20) * 0.03).toFixed(4));
+    notes.push(`Serum LBP (${lbp} ug/mL) -> k_trans = ${params.k_trans} h^-1`);
+  }
+
+  return {
+    calibrated_params: params,
+    estimated_S_inf_h_inv: estimatedSInf,
+    calibration_notes: notes,
   };
 }
 

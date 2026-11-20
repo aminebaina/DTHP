@@ -160,6 +160,12 @@ export interface Translations {
     payloadSubtitle: string;
     copyJson: string;
     copied: string;
+    apiTitle: string;
+    apiSubtitle: string;
+    testApiBtn: string;
+    testingApi: string;
+    apiEndpointsLabel: string;
+    mcpStdioLabel: string;
   };
   disclaimer: {
     badge: string;
@@ -378,6 +384,12 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       payloadSubtitle: 'Structure prête pour API FastAPI / couplage MCMM',
       copyJson: 'Copier JSON',
       copied: 'Copié',
+      apiTitle: 'Connecteur Agent IA (MCP & API REST)',
+      apiSubtitle: 'Exposition déterministe du solveur RK4 pour agents MCP et pipelines HTTP',
+      testApiBtn: 'Tester POST /api/simulate',
+      testingApi: 'Exécution...',
+      apiEndpointsLabel: 'Endpoints HTTP actifs :',
+      mcpStdioLabel: 'Configuration MCP stdio (mcp-server.ts) :',
     },
     disclaimer: {
       badge: 'Usage Recherche Uniquement',
@@ -596,6 +608,12 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       payloadSubtitle: 'Ready for FastAPI service / MCMM microbiome coupling',
       copyJson: 'Copy JSON',
       copied: 'Copied',
+      apiTitle: 'AI Agent Connector (MCP & REST API)',
+      apiSubtitle: 'Deterministic RK4 solver endpoints for MCP agents and HTTP pipelines',
+      testApiBtn: 'Test POST /api/simulate',
+      testingApi: 'Running...',
+      apiEndpointsLabel: 'Active HTTP Endpoints:',
+      mcpStdioLabel: 'Stdio MCP Configuration (mcp-server.ts):',
     },
     disclaimer: {
       badge: 'Research Use Only',
